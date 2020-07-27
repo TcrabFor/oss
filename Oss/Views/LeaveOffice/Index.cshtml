@@ -1,0 +1,655 @@
+﻿
+@{
+    /**/
+
+    /**/
+
+    /**/
+
+    Layout = null;
+}
+@using Oss.Models;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/admin.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div>
+        <table style="background-color:darkturquoise;width:100%;">
+            <tr>
+                <td style="width:300px; color:black;height:60px; line-height:60px;font-size:24px;">加油站日常<>员工离职申请 </td>
+                <td>
+                    <button type="button" class="layui-btn layui-btn-danger" id="AddOthers" onclick="Add()">
+                        <i class="layui-icon">&#xe608;</i> 申请
+                    </button>
+                </td>
+            </tr>
+        </table>
+        @*添加表单*@
+        <div class="layui-form" id="MyAdd" hidden="hidden">
+            <table>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Name" id="Name" value="@ViewData["StaffName"]" required lay-verify="required"  autocomplete="off" class="layui-input" readonly="readonly">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工职位</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="JName" id="JName" value="@ViewData["JobName"]" required lay-verify="required"  autocomplete="off" class="layui-input" readonly="readonly">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">离职类别</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="LeaveType" value="1" title="辞职" checked>
+                                <input type="radio" name="LeaveType" value="0" title="辞退">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">申请离职日期</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">离职原因</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="LeaveResult" id="LeaveResult" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">工作交接说明</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="ExplanationHandover" id="ExplanationHandover" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">交接人</label>
+                            <div class="layui-input-inline">
+                                <select name="HandoverSatffId" lay-verify="required" id="HandoverSatffId">
+                                    <option value="">--选择交接人--</option>
+
+                                    @foreach (Staff s in ViewData["Name"] as List<Staff>)
+                                    {
+                                        <option value="@s.Id">@s.Name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formDemo" id="AddAll" onclick="AddAll()">添加</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="hidden" name="field＿name" value="value" id="LeaveID">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @*修改表单*@
+        <div class="layui-form" id="MyUp" hidden="hidden">
+            <table>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">申请编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="No" id="No" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Lo_Name" id="Lo_Name" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工职位</label>
+                            <div class="layui-input-inline">
+                                <select name="Lo_JName" lay-verify="required" id="Lo_JName">
+                                    <option value="">--选择职位--</option>
+
+                                    @foreach (Job J in ViewData["JobId"] as List<Job>)
+                                    {
+                                        <option value="@J.Name">@J.Name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">离职类别</label>
+                                <div class="layui-input-block" id="LeaveTypes">
+                                    <input type="radio" id="leavez" name="Lo_LeaveType" value="1" title="辞职" checked>
+                                    <input type="radio" id="leaves" name="Lo_LeaveType" value="0" title="辞退">
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">申请离职日期</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="date4" id="Lo_date" lay-verify="Lo_date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">离职原因</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Lo_LeaveResult" id="Lo_LeaveResult" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">工作交接说明</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Lo_ExplanationHandover" id="Lo_ExplanationHandover" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">交接人</label>
+                            <div class="layui-input-inline">
+                                <select name="Lo_HandoverSatffId" lay-verify="required" id="Lo_HandoverSatffId">
+                                    <option value="">--选择交接人--</option>
+
+                                    @foreach (Staff s in ViewData["Name"] as List<Staff>)
+                                    {
+                                        <option value="@s.Name">@s.Name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formDemo" id="UpdateAll" onclick="UpdateAll()">修改</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @*空表单*@
+        <div class="layui-form" id="Mykon" hidden="hidden">
+            <table>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+            <table class="layui-hide" id="test2" lay-filter="test2"></table>
+        </div>
+        @*条件框*@
+        <table>
+            <tr>
+                <td>
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-bg-cyan layui-center">开始日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="date" id="date2" lay-verify="date2" placeholder="2000-00-00" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-bg-cyan layui-center">结束日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="date" id="date3" lay-verify="date3" placeholder="2000-00-00" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+        <script type="text/html" id="barDemo">
+            <button class="layui-btn layui-btn-normal" lay-event="edit">修改</button>
+            <button class="layui-btn" lay-event="Get">发起</button>
+            <button class="layui-btn layui-btn-danger" lay-event="del">删除</button>
+            <button class="layui-btn" lay-event="view">流程视图</button>
+        </script>
+        @*数据表格*@
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+
+        @*templet自定义*@
+        <script type="text/html" id="typeBar">
+            {{#  if(d.IsDel ==true ){ }}
+            <span class=' '>员工未发起</span>
+            {{#  } else { }}
+            <span class=' '>油站员工已发起</span>
+            {{#  } }}
+        </script>
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/layuiadmin/layui/layui.js"></script>
+    <script>
+
+        //加载
+        layui.config({
+            base: '../Content/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use('index', 'from');
+        //表格显示
+        layui.use('table', function () {
+
+            var table = layui.table;
+            layer = layui.layer;
+            //数据表格
+            table.render({
+                elem: '#test'//表格的id
+                , url: '/LeaveOffice/SelectLeaveOffice'//控制器名/方法名（该方法用来获取json格式数据）
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , text:{none:'暂时找不到你想要的数据!'}
+                , totalRow: true //开启合计行
+                , cols: [[
+                    , { field: 'LeaveID', title: '申请单ID', sort: true, width: 289 }
+                    , { field: 'No', title: '申请编号', sort: true, width: 178 }
+                    , { field: 'StaffName', title: '员工姓名', width: 100 } //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    , { field: 'JobName', title: '职位', width: 100 }
+                    , { field: 'ApplyPersonId', title: '申请人ID', width: 100 }                
+                    , {
+                        field: 'CreateTime', title: '申请日期', width: 100, templet: function (d) {
+                            var dateVal = GetDateFormat(d.CreateTime);
+                            var arr = dateVal.split(/[- : T \/]/);
+                            return arr[0] + "-" + arr[1] + "-" + arr[2];
+                        }
+                    }
+                    , {
+                        field: 'LeaveType', title: '申请状态', width: 88, templet: function (d) {
+                            if (d.LeaveType == 1) {
+
+                                return value = "<span class='layui-badge layui-bg-red'>辞职</span>";
+                            } else {
+                                return value = "<span class='layui-badge layui-bg-green'>辞退</span>";
+                            }
+                        }
+                    }, { field: 'IsDel', title: '审批状态', width: 130, templet: '#typeBar' }
+                    , {
+                        field: '', width: 400, align: 'center', toolbar: '#barDemo', title: '操作 '
+                    }
+                ]]
+            });
+            //监听行工具事件,删除，修改
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    , layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'del') {
+                    var layer = layui.layer;
+                    layer.confirm('真的要删除?', function () {
+                        var data = obj.data;
+                        $.ajax({
+                            type: "post",
+                            dataType: "json",
+                            url: "/LeaveOffice/DelLeaveOffice",
+                            data: {
+                                LeaveID:data.LeaveID
+                            },
+                            success: function (data) {
+                                if (data) {
+                                    //删除成功
+                                    var index = layer.open();
+                                    layer.alert('删除成功！');//弹出提示框
+                                    layer.closeAll(); //疯狂模式，关闭所有层
+                                    btnSearch();//刷新表格
+                                } else {
+                                    layer.closeAll(); //疯狂模式，关闭所有层
+                                    btnSearch();//刷新表格
+                                    //删除失败
+                                    layer.alert('员工已提交,删除失败！');//弹出提示框
+                                }
+
+                            }
+                        })
+                    });
+
+                } else if (layEvent === 'edit') {
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['700px', '500px'], //宽高
+                        content: $("#MyUp"),
+                        success: function (yes) {
+                            if (yes) {
+                                var data = obj.data;
+                                $("#LeaveID").attr("value", data.LeaveID);
+                                $("#No").attr("value", data.No);
+                                $("#Lo_Name").attr("value", data.StaffName);
+                                $("#Lo_JName").val(data.JobName);
+                                $("#LeaveTypes").attr("checked", data.LeaveType);
+                                $("#Lo_date").val(data.CreateTime);
+                                $("#Lo_LeaveResult").attr("value", data.Reason);
+                                $("#Lo_ExplanationHandover").attr("value", data.ExplanationHandover);
+                                $("#Lo_HandoverSatffId").val(data.HandoverSatffId);
+                                renderform();   //重新渲染
+                            }
+                        }
+                    });
+                }
+                //发起
+                else if (layEvent === 'Get') {
+                    var layer = layui.layer;
+                    layer.confirm('确定发起申请?(发起后不能修改!)', function () {
+                        console.log(data.IsDel)
+                        if (data.IsDel == true) {
+                            layer.alert("申请成功！");
+                            $.ajax({
+                                type: "post",
+                                dataType: "json",
+                                url: "/LeaveOffice/LeaveOfficeUp",
+                                data: {
+                                    LeaveID: data.LeaveID,
+                                    ApplyPersonId: data.ApplyPersonId,
+                                    No: data.No
+                                }, success: function (data) {
+                                    if (data) {
+
+                                        layer.alert("发起成功!");
+                                        renderform();
+                                        btnSearch();
+                                    }
+                                }
+                            });
+                        } else {
+                            layer.alert("已发起，请勿重复操作！");
+
+                        }
+                    });
+
+                }
+                //流程视图(传id查对应流程)
+                else if (layEvent === 'view') {
+                    var layer = layui.layer;
+                    layer.open({
+                        title: '员工离职审批流程信息',
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['700px', '500px'], //宽高
+                        content: $("#Mykon"),
+                        success: function (data) {
+                            var data = obj.data;//获得当前行数据
+                            if (data) {
+                                //流程表
+                                layui.use('table', function () {
+                                    var table2 = layui.table;
+                                    table2.render({
+                                        elem: '#test2'//表格的id
+                                        , where: { 'LeaveID': data.LeaveID, 'No': data.No, 'StaffName': data.StaffName }
+                                        , url: '/LeaveOffice/SelectProcessStepRecord'///控制器名/方法名（该方法用来获取json格式数据）
+                                        , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                                        , totalRow: true //开启合计行
+                                        , cols: [[
+                                            , { field: 'OrgName', title: '组织机构', sort: true, width: 128 }
+                                            , { field: 'Job', title: '职位', sort: true, width: 100 }
+                                            , { field: 'TakeName', title: '姓名', sort: true, width: 100 }
+                                            , {
+                                                field: 'Result', title: '审批结果', width: 100, templet: function (d) {
+                                                    if (d.Result == true) {
+                                                        return value = "<span class='layui-badge  layui-bg-green'>已通过</span>";
+                                                    } else {
+                                                        return value = "<span class='layui-badge'>未处理</span>";
+                                                    }
+                                                }
+                                            }
+                                        ]],
+                                        done: function (res, curr, count) {
+                                            colSpan()
+
+                                        }
+                                    });
+                                    renderform();  //重新渲染
+                                });
+
+                            }
+
+                        }
+
+                    });
+                }
+            });
+        });
+        //多个时间显示
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#date' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+            laydate.render({
+                elem: '#date2' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+            laydate.render({
+                elem: '#date3' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+            laydate.render({
+                elem: '#Lo_date' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+        });
+
+        //时间戳转换
+        function GetDateFormat(str) {
+            return new Date(parseInt(str.substr(6, 13))).toLocaleDateString();
+        }
+        // 重新渲染表单函数
+        function renderform() {
+            layui.use('form', function () {
+                var form = layui.form; //大部分都是form才能让数据显示在最上面
+                form.render();
+            });
+        }
+        function renderTable() {
+            layui.use('table', function () {
+                var table = layui.table;
+                table.render();
+            });
+        }
+        //修改
+        function UpdateAll() {
+            $.ajax({
+                type: "post"
+                , dataType: "json"
+                , url: "/LeaveOffice/LeaveUpdata"
+                , data: {
+                    LeaveID: $("#LeaveID").val(),
+                    No: $("#No").val(),
+                    Name: $("#Lo_Name").val(),
+                    JName: $("#Lo_JName").val(),
+                    LeaveType: $("#LeaveTypes input[name='Lo_LeaveType']:checked").val(),
+                    date: $("#Lo_date").val(),
+                    Reason: $("#Lo_LeaveResult").val(),
+                    ExplanationHandover: $("#Lo_ExplanationHandover").val(),
+                    HandoverSatffId: $("#Lo_HandoverSatffId").val()
+                }
+                , success: function (data) {
+                    if (data) {
+                        //修改成功
+                        layer.alert('修改成功！');//弹出提示框
+                        layer.closeAll(); //疯狂模式，关闭所有层
+                        btnSearch();//刷新表格
+
+                    } else {
+
+                        layer.closeAll(); //疯狂模式，关闭所有层
+                        layer.alert('员工已提交,修改失败！');//弹出提示框
+                        btnSearch();//刷新表格
+
+                    }
+                }
+            })
+
+        }
+
+        //添加
+        function Add() {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['700px', '500px'], //宽高
+                content: $("#MyAdd")
+            });
+        }
+        function AddAll() {
+            var layer = layui.layer;
+            console.log(88);
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "/LeaveOffice/LeaveOfficeAdd",
+                data: {
+                    StaffName: $("#Name").val(),
+                    JName: $("#JName").val(),
+                    LeaveType: $("input[name='LeaveType']:checked").val(),
+                    ApplyDate: $("#date").val(),
+                    Reason: $("#LeaveResult").val(),
+                    ExplanationHandover: $("#ExplanationHandover").val(),
+                    HandoverSatffId: $("#HandoverSatffId").val(),
+                }, success: function (data) {
+                    if (data) {
+                        //添加成功
+                        var index = layer.open();
+                        layer.alert('添加成功！');//弹出提示框
+                        layer.closeAll(); //疯狂模式，关闭所有层
+                        //$("#MyModal").hide();//隐藏模态框
+                        btnSearch();//刷新表格
+                    } else {
+                        //添加失败
+                        layer.alert('添加失败！');//弹出提示框
+
+                    }
+                }
+
+            });
+        }
+        //表单查询（刷新）
+        function btnSearch() {
+            var table = layui.table;
+            table.reload('test', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name: $("#txtName").val()
+                    //…
+                }
+            })
+        }
+        //合并列
+        function colSpan() {
+            var tab = document.querySelector("div .layui-table-main .layui-table");//获取目标tabel
+            var maxRow = 3, val, count, start;
+            count = 1;
+            val = "";
+            for (var i = 0; i < tab.rows.length; i++) { //遍历所有行
+                for (var col = maxRow - 1; col >= 1; col--) { //遍历每一行的每一个td
+                    if (val == tab.rows[i].cells[col].innerText) { //判断前一个td和后一个td是否相同
+                        if (tab.rows[i].cells[col].innerText.length >= 4) { //判断td的值的长度是否大于4，因为这里的需求是长度大于4有相同的才合并
+                            count++;
+                            tab.rows[i].cells[col].colSpan = count;
+                            for (var j = 1; j < count; j++) {
+                                tab.rows[i].cells[j + col].style.display = "none";//相邻的有相同的值，第一个设置colspan，后面的隐藏
+
+                            }
+
+                        }
+
+                    } else {
+                        if (count > 1) {
+                            count = 1;
+
+                        }
+                        val = tab.rows[i].cells[col].innerText;
+
+                    }
+
+                }
+
+            }
+
+        }
+    </script>
+</body>
+</html>

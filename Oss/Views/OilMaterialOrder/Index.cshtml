@@ -1,0 +1,112 @@
+﻿
+@{
+    /**/
+
+    /**/
+
+    /**/
+
+    Layout = null;
+}
+@using Oss.Models;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/admin.css" rel="stylesheet" />
+    @*<link href="~/design/css/layui.css" rel="stylesheet" />*@
+</head>
+<body>
+
+    <div>
+        <table style="background-color:darkturquoise;width:100%;">
+            <tr>
+                <td style="width:300px;color:black;height:60px; line-height:60px;font-size:24px;">加油站日常>>油料申请 </td>
+                <td>
+                    <button type="button" class="layui-btn layui-btn-danger" id="AddOthers" onclick="Add()">
+                        <i class="layui-icon">&#xe608;</i> 申请
+                    </button>
+                </td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label layui-bg-cyan layui-center">申请单号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="JobCode" id="JobCode" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label layui-bg-cyan layui-center">开始日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="JobCode" id="JobCode" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label layui-bg-cyan layui-center">结束日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="JobCode" id="JobCode" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <script type="text/html" id="barDemo">
+            <button class="layui-btn layui-btn-normal" lay-event="edit">修改</button>
+            <button class="layui-btn" lay-event="Get">发起</button>
+            <button class="layui-btn layui-btn-danger" lay-event="del">删除</button>
+        </script>
+        @*数据表格*@
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/layuiadmin/layui/layui.js"></script>
+    <script>
+
+        //加载表单
+        layui.config({
+            base: '../Content/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use('index', 'from');
+
+        layui.use('table', function () {
+            var table = layui.table;
+
+            table.render({
+                elem: '#test'//表格的id
+                , url: '/OilMaterialOrder/SelectOilM'//    /控制器名/方法名（该方法用来获取json格式数据）
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                //, toolbar: '#toolbarDemo'
+                , totalRow: true //开启合计行
+                , cols: [[
+                    , { field: 'No', title: '申请单号', sort: true, width: 178 }
+                    , { field: 'ApplyName', title: '申请人', width: 100 } //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    , {field: 'ApplyDate', title: '申请日期', width: 200}
+                    , { field: 'Remark', title: '审批状态', width: 160 }
+                    , {
+                        field: '', width: 400, align: 'center', toolbar: '#barDemo', title: '操作 '
+                    }                  
+                ]]              
+            });
+        });
+
+     
+    </script>
+</body>
+</html>

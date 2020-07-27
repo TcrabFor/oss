@@ -1,0 +1,272 @@
+﻿
+@{
+    /**/
+
+    /**/
+
+    /**/
+
+    Layout = null;
+}
+@using Oss.Models;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/admin.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div>
+        <table style="background-color:darkturquoise;width:100%;">
+            <tr>
+                <td style="width:180px; color:black;height:60px; line-height:60px;font-size:24px;">加油站日常=>员工离职审批 </td>
+            </tr>
+        </table>
+        @*空表单*@
+        <div class="layui-form" id="Mykon" hidden="hidden">
+            <table>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+            <table class="layui-hide" id="test2" lay-filter="test2"></table>
+        </div>
+        <script type="text/html" id="barDemo">
+            <button class="layui-btn layui-btn-normal" lay-event="Back">驳回</button>
+            <button class="layui-btn layui-btn-danger" lay-event="Go">通过</button>
+            <button class="layui-btn" lay-event="view">流程视图</button>
+        </script>
+        @*数据表格*@
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+        @*templet自定义*@
+        <script type="text/html" id="typeBar">
+            {{#  if(d.Result ==false ){ }}
+            <span class=' '>未通过</span>
+            {{#  } else { }}
+            <span class=' '>已通过</span>
+            {{#  } }}
+        </script>
+
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/layuiadmin/layui/layui.js"></script>
+    <script>
+
+        //加载
+        layui.config({
+            base: '../Content/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use('index', 'from');
+        //表格显示
+        layui.use('table', function () {
+
+            var table = layui.table;
+            layer = layui.layer;
+
+            //数据表格
+            table.render({
+                elem: '#test'//表格的id
+                , url: '/LeaveApprover/SelectLeaveApprover'//    /控制器名/方法名（该方法用来获取json格式数据）
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                //, toolbar: '#toolbarDemo'
+                , totalRow: true //开启合计行
+                , cols: [[
+                    , { field: 'LeaveID', title: '编号', sort: true, width: 289 }
+                    , { field: 'PsrId', title: '流程ID', sort: true, width: 289 }
+                    , { field: 'RefOrderId', title: '关联单据ID', sort: true, width: 289 }
+
+                    , { field: 'No', title: '申请编号', sort: true, width: 178 }
+                    , { field: 'StaffName', title: '员工姓名', width: 100 } //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    , { field: 'JobName', title: '职位', width: 100 }
+                    , {
+                        field: 'CreateTime', title: '申请日期', width: 100, templet: function (d) {
+                            var dateVal = GetDateFormat(d.CreateTime);
+                            var arr = dateVal.split(/[- : T \/]/);
+                            return arr[0] + "-" + arr[1] + "-" + arr[2];
+                        }
+                    }
+                    , {
+                        field: 'LeaveType', title: '离职状态', width: 88, templet: function (d) {
+                            if (d.LeaveType == 1) {
+                                return value = "<span class='layui-badge layui-bg-red'>辞职</span>";
+
+                            } else {
+                                return value = "<span class='layui-badge layui-bg-green'>辞退</span>";
+                            }
+                        }
+                    }, { field: 'Result', title: '审批状态', width: 130, templet: '#typeBar' }
+                    , {
+                        field: '', width: 400, align: 'center', toolbar: '#barDemo', title: '操作 '
+                    }
+                ]]
+            });
+
+            //监听行工具事件,删除，修改
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    , layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'Back') {
+                    var layer = layui.layer;
+                    layer.confirm('确认要驳回了?', function () {
+                        var data = obj.data;
+                        $.ajax({
+                            type: 'post',
+                            url: '/LeaveApprover/LeaveApproverUp',
+                            dataType: 'Json',
+                            data: {
+                                RefOrderId: data.RefOrderId,
+                                Result: data.Result,
+                                LeaveID: data.LeaveID
+                            },
+                            success: function (finish) {
+                                if (finish) {
+                                    layer.alert('驳回成功！');
+                                    renderform();
+                                    btnSearch();//刷新表格
+                                } else {
+                                    layer.closeAll(); //疯狂模式，关闭所有层
+                                    btnSearch();//刷新表格
+                                    layer.alert('错误流程或已通过，驳回失败！');
+                                }
+                            }
+                        })
+
+                    })
+                } else if (layEvent === 'Go') {
+
+                    var layer = layui.layer;
+                    var data = obj.data //获得当前行数据
+                    $.ajax({
+                        type: "post",
+                        dataType: "json",
+                        url: "/LeaveApprover/LeaveUpdate",
+                        data: {
+                            PsrId: data.PsrId,
+                            Result: data.Result,
+                            RefOrderId: data.RefOrderId
+                        }
+                        , success: function (data) {
+                            if (data) {
+                                layer.alert("通过成功!");
+                                renderform();
+                                btnSearch();
+                            } else {
+                                layer.alert("已通过或前面没有处理,请勿重复操作!");
+                                renderform();
+                                btnSearch();
+                            }
+                        }
+                    });
+
+                }
+                //流程视图(传id查对应流程)
+                else if (layEvent === 'view') {
+
+                    var layer = layui.layer;
+
+                    layer.open({
+                        title: '员工离职审批流程信息',
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['700px', '500px'], //宽高
+                        content: $("#Mykon"),
+                        success: function (data) {
+                            var data = obj.data;//获得当前行数据
+                            if (data) {
+                                //审批流程表
+                                layui.use('table', function () {
+                                    var table2 = layui.table;
+                                    table2.render({
+                                        elem: '#test2'//表格的id
+                                        , where: { LeaveID: data.LeaveID }
+                                        , url: '/LeaveApprover/ApproverView'///控制器名/方法名（该方法用来获取json格式数据）
+                                        , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                                        , totalRow: true //开启合计行
+                                        , cols: [[
+                                            , { field: 'OrgName', title: '组织机构', sort: true, width: 128 }
+                                            , { field: 'Job', title: '职位', sort: true, width: 100 }
+                                            , { field: 'TakeName', title: '姓名', sort: true, width: 100 }
+                                            , {
+                                                field: 'Result', title: '审批结果', width: 100, templet: function (d) {
+                                                    if (d.Result == true) {
+                                                        return value = "<span class='layui-badge  layui-bg-green'>已通过</span>";
+                                                    } else {
+                                                        return value = "<span class='layui-badge'>未处理</span>";
+                                                    }
+                                                }
+                                            }
+                                        ]]
+                                    });
+                                    renderform();  //重新渲染
+                                });
+                            }
+
+                        }
+
+                    });
+                }
+            });
+        });
+
+        //时间戳转换
+        function GetDateFormat(str) {
+            return new Date(parseInt(str.substr(6, 13))).toLocaleDateString();
+        }
+
+        //多个时间显示
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#date' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+            laydate.render({
+                elem: '#date2' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+            laydate.render({
+                elem: '#date3' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+            laydate.render({
+                elem: '#Lo_date' //指定元素
+                , trigger: 'click'//防止闪烁
+            });
+        });
+
+
+        // 重新渲染表单函数
+        function renderform() {
+            layui.use('form', function () {
+                var form = layui.form; //大部分都是form才能让数据显示在最上面
+                form.render();
+            });
+        }
+        function renderTable() {
+            layui.use('table', function () {
+                var table = layui.table;
+                table.render();
+            });
+        }
+
+        //表单查询（刷新）
+        function btnSearch() {
+            var table = layui.table;
+            table.reload('test', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name: $("#txtName").val()
+                    //…
+                }
+            })
+        }
+    </script>
+</body>
+</html>

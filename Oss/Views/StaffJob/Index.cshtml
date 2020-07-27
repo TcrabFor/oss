@@ -1,0 +1,382 @@
+﻿
+@{
+    /**/
+
+    /**/
+
+    /**/
+
+    /**/
+
+    Layout = null;
+}
+@using Oss.Models;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/admin.css" rel="stylesheet" />
+    @*<link href="~/design/css/layui.css" rel="stylesheet" />*@
+</head>
+<body>
+
+    <div>
+        <table style="background-color:darkturquoise;width:100%;">
+            <tr>
+                <td style="width:380px; color:black;height:60px; line-height:60px;font-size:24px;">基础信息维护>>员工基础信息管理 </td>
+                <td>
+                    <button type="button" class="layui-btn layui-btn-danger" id="AddOthers" onclick="AddOthers()">
+                        <i class="layui-icon">&#xe608;</i>添加
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <script type="text/html" id="barDemo">
+            <button class="layui-btn layui-btn-normal" lay-event="edit">修改</button>
+        </script>
+        @*添加表单*@
+        <div class="layui-form" id="MyAdd" hidden="hidden">
+            <table>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="No" id="No" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Name" id="Name" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">出生日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Birthday" id="Birthday" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input" readonly="readonly" @*限制修改*@>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block" id="StaffSex">
+                                <input type="radio" name="sex" value="男" title="男" checked>
+                                <input type="radio" name="sex" value="女" title="女">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">联系地址</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Place" id="Place" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">籍贯</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="NativePlace" id="NativePlace" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Email" id="Email" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">联系电话</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="Tel" id="Tel" value="" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">职位</label>
+                            <div class="layui-input-inline">
+                                <select name="JName" lay-verify="required" id="JName">
+                                    <option value="">--选择职位--</option>
+
+                                    @foreach (Job J in ViewData["JobId"] as List<Job>)
+                                    {
+                                        <option value="@J.Name">@J.Name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属机构</label>
+                            <div class="layui-input-inline">
+                                <select name="OName" lay-verify="required" id="OName">
+                                    <option value="">--选择机构--</option>
+
+                                    @foreach (OrganizationStructure os in ViewData["OrgID"] as List<OrganizationStructure>)
+                                    {
+                                        <option value="@os.Name">@os.Name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-inline">
+                                <select name="Status" lay-verify="required" id="Status">
+                                    <option value="">--请选择--</option>
+                                    <option value="1">在职</option>
+                                    <option value="0">离职</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formDemo" id="AddAll" onclick="AddAll()">添加</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @*数据表格*@
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/layuiadmin/layui/layui.js"></script>
+    <script>
+
+        //加载表单
+        layui.config({
+            base: '../Content/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use('index', 'from');
+
+        layui.use('table', function () {
+            var table = layui.table;
+
+            table.render({
+                elem: '#test'//表格的id
+                , url: '/StaffJob/SelectStaffJob'
+                , cellMinWidth: 80
+                , totalRow: true //开启合计
+                , cols: [[
+                    , { field: 'No', title: '登录账号', sort: true, width: 108 }
+                    , { field: 'Name', title: '员工姓名', width: 100 }
+                    , {
+                        field: 'Sex', title: '员工性别', width: 100, templet: function (ok) {
+                            if (ok.Sex == true) {
+                                return value = "<span class='layui-badge layui-bg-blue'>男</span>";
+                            }
+                            else {
+                                return value = "<span class='layui-badge'>女</span>";
+                            }
+                        }
+                    }
+                    , {
+                        field: 'BirthDay', title: '出生日期', width: 100, templet: function (data) {
+                            var dateVal = GetDateFormat(data.BirthDay);
+                            var arr = dateVal.split(/[- : T \/]/);
+                            return arr[0] + "-" + arr[1] + "-" + arr[2];
+                        }
+                    }
+                    , { field: 'NativePlace', title: '籍贯', width: 100 }
+                    , { field: 'Tel', title: '电话', width: 130 }
+                    , { field: 'Email', title: '邮箱', width: 130 }
+                    , { field: 'J_Name', title: '职位', width: 100 }
+                    , { field: 'OrgName', title: '机构', width: 150 }
+                    , {
+                        field: 'Status', title: '在职状态', width: 100, templet: function (d) {
+                            if (d.Status == 1) {
+                                return value = "<span class='layui-badge layui-bg-green'>在职</span>";
+                            }
+                            else {
+                                return value = "<span class='layui-badge layui-bg-red'>离职</span>";
+                            }
+                        }
+                    }
+
+                    , {
+                        field: '', width: 100, align: 'center', toolbar: '#barDemo', title: '操作 '
+                    }
+                ]]
+                , page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    , groups: 1 //只显示 1 个连续页码
+                    , first: false //不显示首页
+                    , last: false //不显示尾页
+                }
+            });
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    , layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'edit') {
+
+                    //layer.alert('编辑 [Name]：' + data.J_Name);
+                    //打开编辑页面
+                    layer.open({
+                        title: '编辑信息',
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边
+                        area: ['800px', '600px'], //宽高
+                        content: $("#MyAdd"),  //打开弹框后进入
+                        success: function (data) {
+                            var data = obj.data;//需重新获取当前行数据
+                            if (data) {
+                                $("#No").val(data.No),
+                                    $("#Name").val(data.Name),
+                                    $("#Birthday").val(data.BirthDay),
+                                    $("#StaffSex input[name='sex']:checked").val(data.Sex),
+                                    $("#NativePlace").val(data.NativePlace),
+                                    $("#Place").val(data.Address),
+                                    $("#Tel").val(data.Tel),
+                                    $("#Email").val(data.Email),
+                                    $("#JName").val(data.J_Name),
+                                    $("#OName").val(data.OrgName),
+                                    $("#Status").val(data.Status)
+                                renderform();  //重新渲染
+                            }
+                        }
+                    })
+                }
+
+            });
+        });
+
+
+        //时间戳转换
+        function GetDateFormat(str) {
+            return new Date(parseInt(str.substr(6, 13))).toLocaleDateString();
+        }
+
+        //添加
+        function AddOthers() {
+
+            //打开添加页面
+            layer.open({
+                title: '添加',
+                type: 1,
+                skin: 'layui-layer-rim', //加上边
+                area: ['800px', '500px'], //宽高
+                content: $("#MyAdd"),  //打开弹框后进入
+                success: function (data) {
+                    if (data) {
+                        $("#No").val(),
+                            $("#Name").val(),
+                            $("#Birthday").val(),
+                            $("#NativePlace").val(),
+                            $("#Place").val(),
+                            $("#Tel").val(),
+                            $("#Email").val(),
+                            $("#JName").val(),
+                            $("#OName").val(),
+                            $("#Status").val()
+                    }
+                }
+            })
+        }
+        function AddAll() {
+            var layer = layui.layer;
+            $.ajax(
+                {
+                    type: "post",
+                    datatype: "json",
+                    url: "/StaffJob/AddStaffJob",
+                    data: {
+                        No: $("#No").val(),
+                        Name: $("#Name").val(),
+                        Sex: $("input[name='sex']:checked").val(),
+                        NativePlace: $("#NativePlace").val(),
+                        Address: $("#Place").val(),
+                        Tel: $("#Tel").val(),
+                        Email: $("#Email").val(),
+                        JobId: $("#JName").val(),
+                        OrgID: $("#OName").val(),
+                        Status: $("#Status").val()
+                    }, success: function (data) {
+                        if (data) {
+                            //添加成功
+                            var index = layer.open();
+                            layer.alert('添加成功！');//弹出提示框
+                            layer.closeAll(); //疯狂模式，关闭所有层
+                            //$("#MyModal").hide();//隐藏模态框
+                            btnSearch();//刷新表格
+                        } else {
+                            layer.alert('添加失败！');//弹出提示框
+
+                        }
+                    }
+                }
+            )
+        }
+        //表单查询（刷新）
+        function btnSearch() {
+            var table = layui.table;
+            table.reload('test', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name: $("#txtName").val()
+                    //…
+                }
+            })
+        }
+        // 重新渲染表单函数
+        function renderform() {
+            layui.use('form', function () {
+                var form = layui.form; //大部分都是form才能让数据显示在最上面
+                form.render();
+            });
+        }
+        function renderTable() {
+            layui.use('table', function () {
+                var table = layui.table;
+                table.render();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+﻿
+@{
+                /**/
+
+                /**/
+
+                Layout = null;
+}
+@*@using Mcc.Models;*@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/layuiadmin/style/admin.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div>
+        <table>
+            <tr>
+                <td>姓名： <input type="text" name="title" required lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input" id="txtName"></td>
+                <td>
+                    性别：
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="男" title="男"> 男
+                        <input type="radio" name="sex" value="女" title="女"> 女
+                        <input type="radio" name="sex" value="全部" title="全部" checked> 全部
+                    </div>
+                </td>
+                <td>
+                    <label class="layui-form-label">部门</label>
+                    <div class="layui-input-block">
+                        <select name="D_ID" lay-verify="required" id="D_ID">
+                            <option value="">--请选择--</option>
+
+                            @*@foreach (Department d in ViewData["D_ID"] as List<Department>)
+                            {
+                                <option value="@d.D_ID">@d.D_Name</option>
+                            }*@
+
+                        </select>
+                    </div>
+                </td>
+                <td><button class="layui-btn layui-btn-normal" onclick="btnSearch();">查询</button></td>
+            </tr>
+        </table>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="UpAdd">添加</button>
+                <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+                <button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+            </div>
+        </script>
+        @*数据表格*@
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+
+    </div>
+    @*表单*@
+    <div class="layui-form" id="MyModal" hidden="hidden">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" id="txtAddName" required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-inline">
+                <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">密码不能为空</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">部门</label>
+            <div class="layui-input-inline">
+                <select name="D_ID" lay-verify="required" id="dllD_ID">
+                    <option value="">--请选择--</option>
+
+                    @*@foreach (Department d in ViewData["D_ID"] as List<Department>)
+                    {
+                        <option value="@d.D_ID">@d.D_Name</option>
+                    }*@
+
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" id="txtAge" required lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">电话</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" id="txtTel" required lay-verify="required" placeholder="请输入电话号码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="男" title="男">
+                <input type="radio" name="sex" value="女" title="女" checked>
+            </div>
+        </div>
+        @*<div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">文本域</label>
+                <div class="layui-input-block">
+                    <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>*@
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="AddUser();">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/layuiadmin/layui/layui.js"></script>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script>
+        layui.config({
+            base: '../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use('index', 'from');
+        layui.use('table', function () {
+            var table = layui.table;
+
+            table.render({
+                elem: '#test'//表格的id
+                , url: '/UserAll/Indexs/'//    /控制器名/方法名（该方法用来获取json格式数据）
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , toolbar: '#toolbarDemo'
+                , cols: [[
+                    { field: 'U_ID', title: 'ID', sort: true }
+                    , { field: 'U_Name', title: '用户名' } //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    , { field: 'U_Sex', title: '性别' }
+                    , { field: 'U_Age', title: '年龄', sort: true }
+                    , { field: 'U_Tel', title: '电话' }
+                    , { field: 'D_Name', title: '部门', align: 'center' } //单元格内容水平居中
+
+                ]]
+                , page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    //,curr: 5 //设定初始在第 5 页
+                    , groups: 1 //只显示 1 个连续页码
+                    , first: false //不显示首页
+                    , last: false //不显示尾页
+
+                }
+            });
+
+
+            //监听事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                //console.log(checkStatus);
+                switch (obj.event) {
+                    case 'UpAdd':
+                        //页面层
+                        var layer = layui.layer;
+                        layer.open({
+                            type: 1,
+                            skin: 'layui-layer-rim', //加上边框
+                            area: ['800px', '600px'], //宽高
+                            content: $("#MyModal")
+                        });
+                        break;
+                    case 'delete':
+                        layer.msg('删除');
+                        break;
+                    case 'update':
+                        layer.msg('编辑');
+                        break;
+                };
+            });
+
+        });
+        function btnSearch() {
+            var table = layui.table;
+
+
+            table.reload('test', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name: $("#txtName").val()
+                    , sex: $("input[name='sex']:checked").val()
+                    , d_id: $("#D_ID").val()
+                    //…
+                }
+            })
+        }
+
+        //添加
+        function AddUser() {
+            var layer = layui.layer;
+
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/Demo/Add",
+                    data: {
+                        U_Name: $("#txtAddName").val(),
+                        U_Pwd: $("#password").val(),
+                        U_Sex: $("input[name='sex']:checked").val(),
+                        U_Age: $("#txtAge").val(),
+                        U_Tel: $("#txtTel").val(),
+                        U_ID: $("#dllD_ID").val()
+                    }, success: function (data) {
+                        if (data) {
+                            layer.msg('添加成功！！', {
+                                offset: '450px'
+                                , icon: 1
+                            }, function () {
+                                btnSearch();
+                                layer.closeAll(); //疯狂模式，关闭所有层
+                            });
+
+
+
+                        }
+                        else {
+                            layer.msg('添加失败！', {
+                                offset: '450px'
+                                , icon: 2
+                            });
+                        }
+                    }
+
+                });
+        }
+
+
+
+
+    </script>
+</body>
+</html>

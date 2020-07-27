@@ -1,0 +1,117 @@
+﻿
+@{
+    /**/
+
+    /**/
+
+    /**/
+
+    Layout = null;
+}
+@using Oss.Models;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+    <link href="~/Content/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/admin.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/login.css" rel="stylesheet" />
+    <link href="~/design/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div>
+        <table style="background-color:darkturquoise;width:100%;">
+            <tr>
+                <td style="width:300px;color:black;height:60px; line-height:60px;font-size:24px;">系统设置>>系统模块资源 </td>
+                <td>
+                    <button type="button" class="layui-btn" id="AddOthers" onclick="Add()">
+                        <i class="layui-icon">&#xe608;</i> 添加
+                    </button>
+                </td>
+            </tr>
+        </table>
+        @*<table class="layui-hide" id="test" lay-filter="test"></table>*@
+        <div style="height: 100%">
+            <div class="dBody">
+                <table class="layui-hidden" id="treeTable" lay-filter="treeTable"></table>
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/layuiadmin/layui/layui.js"></script>
+    <script src="~/design/extend/treeGrid.js"></script>
+    <script src="~/design/layui.js"></script>
+    <script>
+      //加载tree表格
+        var editObj = null, ptable = null, treeGrid = null, tableId = 'treeTable', layer = null;
+        layui.config({
+            base: '../design/extend/'
+        }).extend({
+            index: 'lib/index', //主入口模块
+            //treeGrid: 'treeGrid',
+            treeGrid: 'treeGrid'
+        }).use(['jquery', 'treeGrid', 'layer'], function () {
+            var $ = jQuery.layui;
+            var layer = layui.layer;
+            treeGrid = layui.treeGrid;
+
+            ptable = treeGrid.render({
+                id: tableId,
+                elem: '#' + tableId,
+                idField: 'Id',
+                treeColIndex: 1,//树形图标显示在第几列
+                treeSpid: 0,//最上级的父级id
+                treeId: 'Id',//id字段的名称
+                treeUpId: 'Pid',//pid字段的名称
+                treeShowName: 'Name',
+                isOpenDefault: false,
+                treeDefaultClose: false,//是否默认折叠
+                /*  treeLinkage: true,*///父级展开时是否自动展开所有子级
+                method: 'get',
+                is_checkbox: true,
+                url: '/SystemResourceModule/SelectSystem',
+                page: false,
+                cols: [[
+                    { type: 'checkbox' },
+                    { field: 'Name', title: '资源模块名' },
+                    { field: 'Code', title: '代码' },
+                    { field: 'Url', title: '路径' },
+                    { field: 'Type', title: '类型', },
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                },
+            });
+            renderTable();
+        });
+        //renderform();
+        //})
+
+        //重新渲染表单函数
+        function renderTable() {
+            layui.use('table', function () {
+                var table = layui.table; //大部分都是form才能让数据显示在最上面
+                table.render();
+            });
+        }
+
+        function renderform() {
+            layui.use('form', function () {
+                var form = layui.form; //大部分都是form才能让数据显示在最上面
+                form.render();
+            });
+        }
+
+
+
+
+
+
+    </script>
+</body>
+</html>
+
+

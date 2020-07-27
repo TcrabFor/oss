@@ -1,0 +1,176 @@
+﻿
+@{
+    /**/
+
+    Layout = null;
+}
+
+@using Oss.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>个人资料</title>
+    <link href="~/Content/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layuiadmin/style/admin.css" rel="stylesheet" />
+    <style>
+        #MyMessage {
+            color: black;
+            font-size: 20px;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            border-bottom: 1px solid;
+        }
+
+        #Text {
+            color: black;
+            font-size: 20px;
+            width: 200px;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        #MyInfo {
+            margin-left: 100px;
+        }
+    </style>
+</head>
+<body onload="MySelf()">
+
+    <div>
+        <div id="MyMessage">个人资料</div>
+        <div id="MyInfo">
+
+            <div>
+                <div class="layui-form-item">
+                    <div class="layui-upload">
+                        <label class="layui-form-label">上传图片:</label>
+                        <button type="button" class="layui-btn" id="test1">上传图片</button>
+                        <div class="layui-upload-list">
+                            <label class="layui-form-label">图片展示:</label>
+                            <img class="layui-upload-img" id="demo1" style="width:80px;height:130px;" src="">
+                            <p id="demoText"></p>
+                        </div>
+                    </div>
+                </div> <!--上传图片-->
+            </div>
+            <table>
+                <!--个人信息-->
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">登录账号:</label>
+                            <div class="layui-input-inline" id="Text">
+                                <input type="text" id="UserId" readonly="readonly">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">员工姓名:</label>
+                            <div class="layui-input-inline" id="Text">
+                                <input type="text" id="UserName" readonly="readonly">
+                                <div class="layui-form-mid layui-word-aux"></div>
+                            </div>
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">当前职位:</label>
+                            <div class="layui-input-inline" id="Text">
+                                <input type="text" id="UserJob" readonly="readonly">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属机构:</label>
+                            <div class="layui-input-inline" id="Text">
+                                <input type="text" id="UserOrg" readonly="readonly">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">当前角色:</label>
+                            <div class="layui-input-inline" id="Text">
+                                <input type="text" id="UserRole" readonly="readonly">
+                                <div class="layui-form-mid layui-word-aux"></div>
+                            </div>
+
+                        </div>
+                    </td>
+                  
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/layuiadmin/layui/layui.js"></script>
+    <script>
+
+  layui.use('upload', function () {
+        var $ = layui.jquery;
+        var upload = layui.upload;
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#test1',
+            url: '@Url.Action("Upload","ImageUpload")', //上传地址，后台的某个控制器
+            before: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $('#demo1').attr('src', result);
+                });
+            }, //长传之前执行的代码，将需要上传的图片显示在页面上
+            done: function (res) {
+                if (res.Result) {
+
+                }
+            }, //上传成功后的回传数据，后台代码未编写，此处尚为写任何内容，将在后面的内容中补上
+            error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传数据库失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            }
+        });
+        });
+
+        function MySelf(){
+            $.ajax({
+                url: '/MySelfMessage/GetMyself',
+                type: 'get',
+                datatype: 'json',
+                 success: function (data) {
+                     if (data) {
+
+                         console.log(data.data)
+
+                         $("#UserId").attr("value", data.data[0]),
+                         $("#UserName").attr("value", data.data[1]),
+                         $("#UserJob").attr("value", data.data[2]),
+                         $("#UserOrg").attr("value", data.data[3]),
+                         $("#UserRole").attr("value", data.data[4])
+ 
+                    }
+                }
+            })
+
+        }
+    </script>
+</body>
+</html>
